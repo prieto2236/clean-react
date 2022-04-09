@@ -49,7 +49,7 @@ describe('AddAccount', () => {
   test('Shoud throw UnexpectedError if HttpPostClient returns 400', async () => {
     const { httpPostClientSpy, sut } = makeSut()
     httpPostClientSpy.response = {
-      statusCode: HttpStatusCode.notFount
+      statusCode: HttpStatusCode.badRequest
     }
     const promise = sut.add(mockAddAccountParams())
     await expect(promise).rejects.toThrow(new UnexpectedError())
