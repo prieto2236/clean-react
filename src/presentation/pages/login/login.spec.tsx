@@ -48,11 +48,6 @@ const simulateValidSubmit = async (sut: RenderResult, email = faker.internet.ema
   await waitFor(() => form)
 }
 
-const testElementText = (sut: RenderResult, fieldName: string, text: string): void => {
-  const el = sut.getByTestId(fieldName)
-  expect(el.textContent).toBe(text)
-}
-
 describe('Login Component', () => {
   afterEach(cleanup)
   test('Shoud start with initial state', () => {
@@ -128,10 +123,10 @@ describe('Login Component', () => {
   test('Shoud present error if Authentication fails', async () => {
     const { sut, authenticationSpy } = makeSut()
     const error = new InvalidCredentialsError()
-    jest.spyOn(authenticationSpy, 'auth').mockReturnValueOnce(Promise.reject(error))
+    jest.spyOn(authenticationSpy, 'auth').mockRejectedValueOnce(error)
     await simulateValidSubmit(sut)
     Helper.testChildCount(sut, 'error-wrap', 1)
-    testElementText(sut, 'main-error', error.message)
+    Helper.testElementText(sut, 'main-error', error.message)
   })
 
   test('Shoud call SaveAccessToken on success', async () => {
@@ -148,7 +143,7 @@ describe('Login Component', () => {
     jest.spyOn(saveAccessTokenMock, 'save').mockReturnValueOnce(Promise.reject(error))
     await simulateValidSubmit(sut)
     Helper.testChildCount(sut, 'error-wrap', 1)
-    testElementText(sut, 'main-error', error.message)
+    Helper.testElementText(sut, 'main-error', error.message)
   })
 
   test('Shoud go to signup page', async () => {
