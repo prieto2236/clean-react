@@ -1,6 +1,6 @@
 import faker from 'faker'
 import * as FormHelper from '../support/form-helper'
-import { mockEmailInUseError } from '../support/signup-mocks'
+import * as Http from '../support/signup-mocks'
 
 const simulateValidSubmit = (): void => {
   cy.getByTestId('name').focus().type(faker.name.findName())
@@ -68,9 +68,16 @@ describe('SignUp', () => {
   })
 
   it('Shoud present EmailInUseError on 403', () => {
-    mockEmailInUseError()
+    Http.mockEmailInUseError()
     simulateValidSubmit()
     FormHelper.testMainError('Esse e-mail já está em uso')
+    FormHelper.testUrl('/signup')
+  })
+
+  it('Shoud present UnexpectedError on default error cases', () => {
+    Http.mockUnexpectedError()
+    simulateValidSubmit()
+    FormHelper.testMainError('Algo de errado aconteceu. Tente novamente em breve')
     FormHelper.testUrl('/signup')
   })
 })
